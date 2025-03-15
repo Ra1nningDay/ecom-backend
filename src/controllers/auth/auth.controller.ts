@@ -33,11 +33,13 @@ const AuthController = {
         try {
             const user = await createUser(email, password);
 
-            res.json(user);
-        } catch (err) {
+            res.json({message: "Register Successfully", user: {
+                id: user.id,
+                email: user.email
+            }});
+        } catch (err:any) {
             res.status(500).json({
                 message: "Error Registator User",
-                error: err,
             });
         }
     },

@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "dict/app.js",
     "scripts": {
-        "start": "nodemon dict/app.js",
+        "start": "npx tsc && nodemon dict/app.js",
         "dev": "node --loader ts-node/esm src/app.ts",
         "build": "tsc",
         "test": "jest",

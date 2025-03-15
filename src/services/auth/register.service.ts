@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { response } from "express";
 
 const prisma = new PrismaClient();
 
@@ -15,10 +16,6 @@ const createUser = async (email: string, password: string) => {
         const Role = await prisma.role.findFirstOrThrow({
             where: { name: "user" },
         });
-
-        if (!Role) {
-            throw new Error("Role do not found!");
-        }
 
         const existingUser = await prisma.user.findUnique({
             where: { email: email },
