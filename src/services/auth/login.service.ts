@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -23,10 +22,8 @@ const loginUser = async (email: string, password: string) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            throw new Error("Password is invalid!");
+            throw { status: 401, message: "Password is invalid!" };
         }
-
-        
 
         return user;
     } catch (err) {
