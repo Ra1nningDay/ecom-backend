@@ -11,40 +11,40 @@ const hashPassword = async (password: string) => {
 };
 
 const createUser = async (email: string, password: string) => {
-    try {
-        //Fetch the default role for new users
-        const Role = await prisma.role.findFirstOrThrow({
-            where: { name: "user" },
-        });
+    //Fetch the default role for new users
+    const Role = await prisma.role.findFirstOrThrow({
+        where: { name: "user" },
+    });
 
-        const existingUser = await prisma.user.findUnique({
-            where: { email: email },
-        });
+    if (!Role) {
+        throw { status: 500, message: "Role not found!" };
+    }
 
-        if (existingUser) {
-            throw new Error("User already exits");
-        }
+    const existingUser = await prisma.user.findUnique({
+        where: { email: email },
+    });
 
-        const hashedPassword = await hashPassword(password);
+    if (existingUser) {
+        throw { status: 409, message: "User already exits" };
+    }
 
-        const user = await prisma.user.create({
-            data: {
-                email,
-                password: hashedPassword,
-                avatar: "", //(Can update later)
-                roles: {
-                    create: {
-                        role: {
-                            connect: { id: Role.id },
-                        },
+    const hashedPassword = await hashPassword(password);
+
+    const user = await prisma.user.create({
+        data: {
+            email,
+            password: hashedPassword,
+            avatar: "", //(Can update later)
+            roles: {
+                create: {
+                    role: {
+                        connect: { id: Role.id },
                     },
                 },
             },
-        });
-        return user;
-    } catch (err) {
-        throw new Error("Error creating user" + err);
-    }
+        },
+    });
+    return user;
 };
 
 export { createUser };

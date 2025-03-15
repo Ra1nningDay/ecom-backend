@@ -33,13 +33,18 @@ const AuthController = {
         try {
             const user = await createUser(email, password);
 
-            res.json({message: "Register Successfully", user: {
-                id: user.id,
-                email: user.email
-            }});
-        } catch (err:any) {
+            res.json({
+                message: "Register Successfully",
+                user: {
+                    id: user.id,
+                    email: user.email,
+                },
+            });
+        } catch (err: unknown) {
+            const error = err as Error;
             res.status(500).json({
                 message: "Error Registator User",
+                error: error.message,
             });
         }
     },
@@ -80,10 +85,11 @@ const AuthController = {
                     role: roleName,
                 },
             });
-        } catch (err) {
+        } catch (err: unknown) {
+            const error = err as Error;
             res.status(500).json({
                 message: "Error Login User",
-                error: err,
+                error: error.message,
             });
         }
     },
