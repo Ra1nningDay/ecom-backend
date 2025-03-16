@@ -12,8 +12,14 @@ dotenv.config();
  * @param res - HTTP response sending back the created user or an error
  */
 
+interface userRequest {
+    email: string;
+    password: string;
+    verify_password: string;
+}
+
 const AuthController = {
-    register: async (req: Request, res: Response) => {
+    register: async (req: Request<userRequest>, res: Response) => {
         const { email, password, verify_password } = req.body;
 
         if (!password || !verify_password || !email) {

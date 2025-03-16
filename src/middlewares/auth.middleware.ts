@@ -4,7 +4,19 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const auth = (req: Request, res: Response, next: NextFunction): void => {
+interface AuthResponse {
+    success: boolean;
+    message: string;
+    error?: string;
+}
+
+declare module "express" {
+    interface Request {
+        user?: JwtPayload;
+    }
+}
+
+export const auth = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers["authorization"];
     const token =
         authHeader && authHeader.startsWith("Bearer ")
@@ -14,10 +26,12 @@ export const auth = (req: Request, res: Response, next: NextFunction): void => {
     const secret: Secret = process.env.JWT_SECRET as Secret;
 
     if (!token) {
-        res.status(401).json({
+        const response: AuthResponse = {
             success: false,
             message: "No token provided!",
-        });
+        };
+
+        res.status(401).json(response);
         return;
     }
 
@@ -37,17 +51,12 @@ export const auth = (req: Request, res: Response, next: NextFunction): void => {
         next();
     } catch (err: unknown) {
         const error = err as Error;
-        res.status(401).json({
+        const response: AuthResponse = {
             success: false,
             message: "Invalid or expired token!",
             error: error.message,
-        });
+        };
+        res.status(401).json(response);
         return;
     }
 };
-
-declare module "express" {
-    interface Request {
-        user?: jwt.JwtPayload | string;
-    }
-}
