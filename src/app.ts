@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
+import producRouter from "./routes/product.js";
 import cors from "cors";
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(indexRouter);
 app.use("/api", authRouter);
+app.use("/api", producRouter);
 
 app.listen(port, () => {
     console.log(`[server]: Server running at http://localhost:${port}`);
