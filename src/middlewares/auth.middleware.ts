@@ -23,8 +23,15 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
             ? authHeader.split(" ")[1]
             : null;
 
-    const secret: Secret = process.env.JWT_SECRET as Secret;
-
+    const secret: Secret | undefined = process.env.JWT_SECRET as Secret;
+    if (typeof secret !== "string") {
+        const response: AuthResponse = {
+            success: false,
+            message: "JWT_SECRET is not defined!",
+        };
+        res.status(500).json(response);
+        return;
+    }
     if (!token) {
         const response: AuthResponse = {
             success: false,
