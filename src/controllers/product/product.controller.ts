@@ -5,9 +5,14 @@ import {
     getProducts,
 } from "../../services/product/product.service.js";
 
+/**
+ * @param req Http request container product id name price quantity
+ * @param res Http response sending back product to client
+ */
+
 interface apiResource<T> {
     success: boolean;
-    message: string;
+    message?: string;
     data?: T;
     error?: string;
 }
@@ -45,7 +50,12 @@ const ProductController = {
 
             const product: Product | null = await getProductById(id);
 
-            res.status(200).json(product);
+            const response: apiResource<Product | null> = {
+                success: true,
+                data: product,
+            };
+
+            res.status(200).json(response);
         } catch (err) {
             const error = err as Error;
             const response: apiResource<Product | null> = {
