@@ -15,12 +15,12 @@ const getProducts = async (): Promise<Product[]> => {
 const getProductById = async (id: string): Promise<Product | null> => {
     const product = await prisma.product.findFirst({
         where: {
-            id: parseInt(id),
+            id: Number(id),
         },
     });
 
     if (!product) {
-        throw { message: "No product found!" };
+        throw { message: "No a product found!" };
     }
 
     return product as Product;

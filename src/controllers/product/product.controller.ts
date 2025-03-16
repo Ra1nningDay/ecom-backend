@@ -22,23 +22,35 @@ const ProductController = {
             const error = err as Error;
             const response: apiResource<Product[]> = {
                 success: false,
-                message: "Error Fetching Products",
+                message: "Error fetching products",
                 error: error.message,
             };
             res.status(500).json(response);
         }
     },
 
-    getProductById: async (req: Request, res: Response): Promise<void> => {
+    getProductById: async (
+        req: Request<{ id: string }>,
+        res: Response
+    ): Promise<void> => {
         try {
-            const id: string = req.body;
+            const { id } = req.params;
+
+            if (isNaN(Number(id)) || !id) {
+                res.status(400).json({
+                    success: false,
+                    message: "Invalid product ID",
+                });
+            }
 
             const product: Product | null = await getProductById(id);
+
+            res.status(200).json(product);
         } catch (err) {
             const error = err as Error;
             const response: apiResource<Product | null> = {
                 success: false,
-                message: "Error Fetching Products",
+                message: "Error fetching product",
                 error: error.message,
             };
             res.status(500).json(response);
