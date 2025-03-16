@@ -26,8 +26,9 @@ const loginUser = async (email: string, password: string) => {
         }
 
         return user;
-    } catch (err) {
-        throw err;
+    } catch (err: unknown) {
+        const error = err as Error;
+        throw error;
     }
 };
 
