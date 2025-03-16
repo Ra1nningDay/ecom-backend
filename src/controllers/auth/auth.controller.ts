@@ -19,7 +19,10 @@ interface userRequest {
 }
 
 const AuthController = {
-    register: async (req: Request<userRequest>, res: Response) => {
+    register: async (
+        req: Request<userRequest>,
+        res: Response
+    ): Promise<void> => {
         const { email, password, verify_password } = req.body;
 
         if (!password || !verify_password || !email) {
@@ -55,7 +58,7 @@ const AuthController = {
         }
     },
 
-    login: async (req: Request, res: Response) => {
+    login: async (req: Request, res: Response): Promise<void> => {
         const { email, password } = req.body;
 
         if (!email || !password) {
