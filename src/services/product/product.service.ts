@@ -12,4 +12,18 @@ const getProducts = async (): Promise<Product[]> => {
     return products;
 };
 
-export { getProducts };
+const getProductById = async (id: string): Promise<Product | null> => {
+    const product = await prisma.product.findFirst({
+        where: {
+            id: parseInt(id),
+        },
+    });
+
+    if (!product) {
+        throw { message: "No product found!" };
+    }
+
+    return product as Product;
+};
+
+export { getProducts, getProductById };

@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { Product } from "@prisma/client";
-import { getProducts } from "../../services/product/product.service.js";
+import {
+    getProductById,
+    getProducts,
+} from "../../services/product/product.service.js";
 
 interface apiResource<T> {
     success: boolean;
@@ -18,6 +21,22 @@ const ProductController = {
         } catch (err: unknown) {
             const error = err as Error;
             const response: apiResource<Product[]> = {
+                success: false,
+                message: "Error Fetching Products",
+                error: error.message,
+            };
+            res.status(500).json(response);
+        }
+    },
+
+    getProductById: async (req: Request, res: Response): Promise<void> => {
+        try {
+            const id: string = req.body;
+
+            const product: Product | null = await getProductById(id);
+        } catch (err) {
+            const error = err as Error;
+            const response: apiResource<Product | null> = {
                 success: false,
                 message: "Error Fetching Products",
                 error: error.message,
