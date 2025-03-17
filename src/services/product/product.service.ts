@@ -38,6 +38,7 @@ const createProductService = async (
 
     if (!categoryExists) {
         throw {
+            status: 500,
             success: false,
             message: `Category with id ${category_id} not found`,
         };

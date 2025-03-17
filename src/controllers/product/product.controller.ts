@@ -7,6 +7,7 @@ import {
     updateProductService,
     deleteProductService,
 } from "../../services/product/product.service.js";
+import { productSchema } from "../validators/product.validator.js";
 
 /**
  * @param req Http request container product id name price quantity
@@ -80,7 +81,8 @@ const ProductController = {
         res: Response
     ): Promise<void> => {
         try {
-            const { name, price, stock_quantity, category_id } = req.body;
+            const { name, price, stock_quantity, category_id } =
+                productSchema.parse(req.body);
             const product: Product | null = await createProductService(
                 name,
                 Number(price),
@@ -111,12 +113,13 @@ const ProductController = {
     ): Promise<void> => {
         try {
             const { id } = req.params;
-            const { name, price, stock_quantity, category_id } = req.body;
+            const { name, price, stock_quantity, category_id } =
+                productSchema.parse(req.body);
 
             const product = await updateProductService(
                 id,
                 name,
-                Number(price),
+                price,
                 stock_quantity,
                 category_id
             );
