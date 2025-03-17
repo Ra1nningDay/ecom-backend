@@ -1,4 +1,4 @@
-import { PrismaClient, Product } from "@prisma/client";
+import { Category, PrismaClient, Product } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
@@ -33,16 +33,28 @@ const createProduct = async (
     category_id: number,
     stock_quantity: number
 ): Promise<Product | null> => {
+    // ตรวจสอบว่า Category มีอยู่จริง
+    const categoryExists = await prisma.category.findUnique({
+        where: { id: category_id },
+    });
+
+    if (!categoryExists) {
+        throw {
+            success: false,
+            message: `Category with id ${category_id} not found`,
+        };
+    }
+
     const product = await prisma.product.create({
         data: {
             name,
-            price,
-            stock_quantity,
+            price: price,
             category: {
                 connect: {
-                    id: category_id,
+                    id: categoryExists.id,
                 },
             },
+            stock_quantity,
         },
     });
 

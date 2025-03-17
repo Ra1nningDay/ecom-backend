@@ -74,13 +74,9 @@ const ProductController = {
             const product: Product | null = await createProduct(
                 name,
                 Number(price),
-                stock_quantity,
-                category_id
+                category_id,
+                stock_quantity
             );
-            res.status(201).json({
-                success: true,
-                data: product,
-            });
 
             const response: apiResource<Product | null> = {
                 success: true,
