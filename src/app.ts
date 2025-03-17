@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
 import producRouter from "./routes/product.js";
+import categoryRouter from "./routes/category.js";
 import cors from "cors";
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(indexRouter);
 app.use("/api", authRouter);
+app.use("/api", categoryRouter);
 app.use("/api", producRouter);
 
 app.listen(port, () => {
