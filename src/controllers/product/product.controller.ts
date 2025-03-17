@@ -16,16 +16,21 @@ import {
 interface apiResource<T> {
     success: boolean;
     message?: string;
-    data?: T;
+    data?: T | T[];
     error?: string;
 }
 
 const ProductController = {
     getProducts: async (req: Request, res: Response): Promise<void> => {
         try {
-            const products: Product[] = await getProductsService();
+            const products: Product[] | undefined = await getProductsService();
 
-            res.status(200).json(products);
+            const response: apiResource<Product | null> = {
+                success: true,
+                data: products,
+            };
+
+            res.status(200).json(response);
         } catch (err: unknown) {
             const error = err as Error;
             const response: apiResource<Product[]> = {
@@ -70,7 +75,10 @@ const ProductController = {
         }
     },
 
-    createProduct: async (req: Request<any, any, Product>, res: Response) => {
+    createProduct: async (
+        req: Request<any, any, Product>,
+        res: Response
+    ): Promise<void> => {
         try {
             const { name, price, stock_quantity, category_id } = req.body;
             const product: Product | null = await createProductService(
@@ -100,7 +108,7 @@ const ProductController = {
     updateProduct: async (
         req: Request<{ id: string }, any, Product>,
         res: Response
-    ) => {
+    ): Promise<void> => {
         try {
             const { id } = req.params;
             const { name, price, stock_quantity, category_id } = req.body;
@@ -130,7 +138,10 @@ const ProductController = {
         }
     },
 
-    deleteProduct: async (req: Request<{ id: string }>, res: Response) => {
+    deleteProduct: async (
+        req: Request<{ id: string }>,
+        res: Response
+    ): Promise<void> => {
         try {
             const { id } = req.params;
             const product = await deleteProductService(id);

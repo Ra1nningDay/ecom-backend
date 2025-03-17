@@ -1,5 +1,4 @@
-import { Category, PrismaClient, Product } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { PrismaClient, Product } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
