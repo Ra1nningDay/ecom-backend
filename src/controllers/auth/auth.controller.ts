@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { createUser } from "../../services/auth/register.service.js";
 import { loginUser } from "../../services/auth/login.service.js";
+import { userSchema } from "../validators/user.validator.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -23,14 +24,7 @@ const AuthController = {
         req: Request<userRequest>,
         res: Response
     ): Promise<void> => {
-        const { email, password, verify_password } = req.body;
-
-        if (!password || !verify_password || !email) {
-            res.status(400).json({
-                message: "Password is required!",
-            });
-            return;
-        }
+        const { email, password, verify_password } = userSchema.parse(req.body);
 
         if (password !== verify_password) {
             res.status(401).json({
@@ -59,12 +53,7 @@ const AuthController = {
     },
 
     login: async (req: Request, res: Response): Promise<void> => {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            res.status(400).json("Emaill or Password are required!");
-            return;
-        }
+        const { email, password } = userSchema.parse(req.body);
 
         try {
             const user = await loginUser(email, password);
