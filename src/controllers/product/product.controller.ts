@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { Product } from "@prisma/client";
 import {
-    createProduct,
-    getProductById,
-    getProducts,
+    createProductService,
+    getProductByIdService,
+    getProductsService,
+    updateProductService,
+    deleteProductService,
 } from "../../services/product/product.service.js";
 
 /**
@@ -21,7 +23,7 @@ interface apiResource<T> {
 const ProductController = {
     getProducts: async (req: Request, res: Response): Promise<void> => {
         try {
-            const products: Product[] = await getProducts();
+            const products: Product[] = await getProductsService();
 
             res.status(200).json(products);
         } catch (err: unknown) {
@@ -49,7 +51,7 @@ const ProductController = {
                 });
             }
 
-            const product: Product | null = await getProductById(id);
+            const product: Product | null = await getProductByIdService(id);
 
             const response: apiResource<Product | null> = {
                 success: true,
@@ -68,10 +70,10 @@ const ProductController = {
         }
     },
 
-    createProduct: async (req: Request<{}, {}, Product>, res: Response) => {
+    createProduct: async (req: Request<any, any, Product>, res: Response) => {
         try {
             const { name, price, stock_quantity, category_id } = req.body;
-            const product: Product | null = await createProduct(
+            const product: Product | null = await createProductService(
                 name,
                 Number(price),
                 category_id,
@@ -89,6 +91,61 @@ const ProductController = {
             const response: apiResource<Product | null> = {
                 success: false,
                 message: "Error creating product",
+                error: error.message,
+            };
+            res.status(500).json(response);
+        }
+    },
+
+    updateProduct: async (
+        req: Request<{ id: string }, any, Product>,
+        res: Response
+    ) => {
+        try {
+            const { id } = req.params;
+            const { name, price, stock_quantity, category_id } = req.body;
+
+            const product = await updateProductService(
+                id,
+                name,
+                Number(price),
+                stock_quantity,
+                category_id
+            );
+
+            const response: apiResource<Product | null> = {
+                success: true,
+                data: product,
+            };
+
+            res.status(200).json(response);
+        } catch (err) {
+            const error = err as Error;
+            const response: apiResource<Product | null> = {
+                success: false,
+                message: "Error updating product",
+                error: error.message,
+            };
+            res.status(500).json(response);
+        }
+    },
+
+    deleteProduct: async (req: Request<{ id: string }>, res: Response) => {
+        try {
+            const { id } = req.params;
+            const product = await deleteProductService(id);
+
+            const response: apiResource<Product | null> = {
+                success: true,
+                data: product,
+            };
+
+            res.status(200).json(response);
+        } catch (err) {
+            const error = err as Error;
+            const response: apiResource<Product | null> = {
+                success: false,
+                message: "Error updating product",
                 error: error.message,
             };
             res.status(500).json(response);
