@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Product } from "@prisma/client";
 import {
+    createProduct,
     getProductById,
     getProducts,
 } from "../../services/product/product.service.js";
@@ -61,6 +62,37 @@ const ProductController = {
             const response: apiResource<Product | null> = {
                 success: false,
                 message: "Error fetching product",
+                error: error.message,
+            };
+            res.status(500).json(response);
+        }
+    },
+
+    createProduct: async (req: Request<{}, {}, Product>, res: Response) => {
+        try {
+            const { name, price, stock_quantity, category_id } = req.body;
+            const product: Product | null = await createProduct(
+                name,
+                Number(price),
+                stock_quantity,
+                category_id
+            );
+            res.status(201).json({
+                success: true,
+                data: product,
+            });
+
+            const response: apiResource<Product | null> = {
+                success: true,
+                data: product,
+            };
+
+            res.status(200).json(response);
+        } catch (err) {
+            const error = err as Error;
+            const response: apiResource<Product | null> = {
+                success: false,
+                message: "Error creating product",
                 error: error.message,
             };
             res.status(500).json(response);
