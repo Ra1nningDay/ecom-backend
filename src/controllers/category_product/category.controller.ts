@@ -108,6 +108,7 @@ const CategoryController = {
 
             const Category: Category | null = await updateCategoryService(
                 id,
+                validated.name,
                 validated.description || ""
             );
 

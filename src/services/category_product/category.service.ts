@@ -42,8 +42,8 @@ const createCategoryService = async (
 
 const updateCategoryService = async (
     id: string,
-    name?: string,
-    description?: string
+    name: string,
+    description: string
 ): Promise<Category | null> => {
     const Category = await prisma.category.update({
         where: {
